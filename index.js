@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-const db = require("@cyclic.sh/dynamodb");
+const cyclicDB = require("cyclic-dynamodb");
 const crypto = require("crypto");
 const { createServer } = require("http");
 
+const db = cyclicDB(process.env.DB_NAME);
 const COLLECTION = "content";
 
 const find = async (code) => {
