@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+const express = require("express");
+const bodyParser = require("body-parser");
 const cyclicDB = require("@cyclic.sh/dynamodb");
 const crypto = require("crypto");
-const { createServer } = require("http");
 
+const app = express();
 const db = cyclicDB(process.env.CYCLIC_DB);
 const COLLECTION = "content";
 
@@ -39,43 +41,24 @@ const create = async (content) => {
   return code;
 };
 
-const ok = (res, content) => {
-  res.writeHead(200);
-  res.write(content);
-  res.end();
-};
+app.use(bodyParser.text());
 
-const notFound = (res) => {
-  res.writeHead(404);
-  res.write("Not Found!");
-  res.end();
-};
+app.get("/:key", async (req, res) => {
+  const data = await find(req.params.key);
+  const content = data ? data.props.content : null;
 
-const redirect = (res, to) => {
-  res.writeHead(307, {
-    Location: to,
-  });
-  res.end();
-};
-
-createServer(async (req, res) => {
-  const { pathname } = new URL(req.url, "http://127.0.0.1/");
-
-  if (pathname === "/") {
-    ok(res, "Hi!");
-  } else if (pathname.startsWith("/=")) {
-    const key = await create(pathname.substring(2));
-    ok(res, key);
+  if (!content) {
+    res.sendStatus(404);
+  } else if (isURL(content)) {
+    res.redirect(content);
   } else {
-    const data = await find(pathname.substring(1));
-    const content = data ? data.props.content : null;
-
-    if (!content) {
-      notFound(res);
-    } else if (isURL(content)) {
-      redirect(res, content);
-    } else {
-      ok(res, content);
-    }
+    res.send(content);
   }
-}).listen(3000);
+});
+
+app.post("/", async (req, res) => {
+  const key = await create(req.body);
+  res.send(key);
+});
+
+app.listen(3000);
