@@ -31,7 +31,11 @@ const isURL = (content) => {
 
 const create = async (content) => {
   const code = await getCode();
-  await db.collection(COLLECTION).set(code, content);
+  const data = {
+    content,
+    ttl: Math.floor(Date.now() / 1000) + 3600 * 72,
+  };
+  await db.collection(COLLECTION).set(code, data);
   return code;
 };
 
@@ -63,7 +67,8 @@ createServer(async (req, res) => {
     const key = await create(pathname.substring(2));
     ok(res, key);
   } else {
-    const content = await find(pathname.substring(1));
+    const data = await find(pathname.substring(1));
+    const content = data ? data.props.content : null;
 
     if (!content) {
       notFound(res);
