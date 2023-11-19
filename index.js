@@ -30,7 +30,7 @@ const isURL = (content) => {
 };
 
 const create = async (content) => {
-  const code = getCode();
+  const code = await getCode();
   await db.collection(COLLECTION).set(code, content);
   return code;
 };
