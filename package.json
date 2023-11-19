@@ -1,0 +1,14 @@
+{
+  "name": "pastr-serverless",
+  "version": "0.1.0",
+  "description": "Minimal URL shortener and paste tool",
+  "author": "Hossain Alhaidari <dev@hossain.al> (https://hossain.al)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@cyclic.sh/dynamodb": "^0.0.35"
+  }
+}
