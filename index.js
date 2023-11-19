@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const cyclicDB = require("cyclic-dynamodb");
+const cyclicDB = require("@cyclic.sh/dynamodb");
 const crypto = require("crypto");
 const { createServer } = require("http");
 
